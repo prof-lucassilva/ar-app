@@ -2,8 +2,8 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR.js - Pato e Helicóptero</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>AR.js - Zoom com Botões e Pinça</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/ar.js/1.7.2/aframe/build/aframe-ar.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/aframe-gesture-detector@^1.2.2/dist/aframe-gesture-detector.min.js"></script>
@@ -11,20 +11,24 @@
         body { margin: 0; overflow: hidden; }
         .zoom-controls {
             position: fixed;
-            bottom: 60px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             gap: 10px;
+            z-index: 1000;
         }
         button {
-            padding: 10px 15px;
+            padding: 15px 20px;
             font-size: 20px;
             border: none;
             background: #007BFF;
             color: white;
             border-radius: 5px;
             cursor: pointer;
+        }
+        button:active {
+            background: #0056b3;
         }
     </style>
 </head>
@@ -45,20 +49,20 @@
             </a-entity>
         </a-marker>
 
-        <!-- Câmera com suporte a Pinça e Botões -->
+        <!-- Câmera com FOV ajustado e suporte a Pinça e Botões -->
         <a-entity 
             id="camera" 
             camera 
-            fov="80" 
-            position="0 1.6 4"
+            fov="90"  <!-- Ajustado para um valor inicial adequado -->
+            position="0 1.6 3"  <!-- Ajustado para evitar zoom muito grande -->
             gesture-detector>
         </a-entity>
     </a-scene>
 
     <!-- Controles de Zoom -->
     <div class="zoom-controls">
-        <button onclick="ajustarZoom(-5)">➖</button>
-        <button onclick="ajustarZoom(5)">➕</button>
+        <button onclick="ajustarZoom(5)">➖</button>
+        <button onclick="ajustarZoom(-5)">➕</button>
     </div>
 
     <script>
@@ -67,14 +71,15 @@
         // Função para ajustar o zoom pelos botões
         function ajustarZoom(valor) {
             let fovAtual = parseFloat(camera.getAttribute("fov"));
-            let novoFov = Math.min(Math.max(fovAtual + valor, 50), 120); // Limita entre 50 e 120
+            let novoFov = Math.min(Math.max(fovAtual + valor, 40), 120); // Limita entre 40 e 120
             camera.setAttribute("fov", novoFov);
         }
 
         // Ajustar zoom com gesto de pinça (pinch-to-zoom)
         camera.addEventListener("pinchmoved", (event) => {
+            let escala = event.detail.scale;
             let fovAtual = parseFloat(camera.getAttribute("fov"));
-            let novoFov = Math.min(Math.max(fovAtual * event.detail.scale, 50), 120);
+            let novoFov = Math.min(Math.max(fovAtual / escala, 40), 120);
             camera.setAttribute("fov", novoFov);
         });
     </script>
