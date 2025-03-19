@@ -12,9 +12,18 @@
     <a-scene embedded arjs>
         <!-- Criar o marcador Hiro (padrão do AR.js) -->
         <a-marker preset="hiro">
-            <!-- Criar um pato de boracha 3D na cena -->
-            <a-entity position="0 0 0" scale="0.5 0.5 0.5"
+            <!-- Modelo do Pato -->
+            <a-entity 
+                position="-0.3 0 0"
+                scale="0.5 0.5 0.5"
                 gltf-model="https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Models/2.0/Duck/glTF/Duck.gltf">
+            </a-entity>
+
+            <!-- Modelo do Helicóptero -->
+            <a-entity 
+                position="0.3 0 0"
+                scale="0.5 0.5 0.5"
+                gltf-model="./helicoptero.glb">
             </a-entity>
         </a-marker>
         <!-- Adicionar a câmera -->
