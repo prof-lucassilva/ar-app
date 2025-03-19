@@ -6,19 +6,38 @@
     <title>AR.js - Pato e Helicóptero</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/ar.js/1.7.2/aframe/build/aframe-ar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aframe-gesture-detector@^1.2.2/dist/aframe-gesture-detector.min.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        .zoom-controls {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 20px;
+            border: none;
+            background: #007BFF;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
 </head>
-<body style="margin: 0; overflow: hidden;">
+<body>
+
     <a-scene embedded arjs>
-        <!-- Ajuste do marcador -->
         <a-marker preset="hiro">
-            <!-- Modelo do Pato (Movido para trás e menor) -->
             <a-entity 
                 position="-0.4 0 -1"
                 scale="0.3 0.3 0.3"
                 gltf-model="https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Models/2.0/Duck/glTF/Duck.gltf">
             </a-entity>
 
-            <!-- Modelo do Helicóptero (Movido para trás e menor) -->
             <a-entity 
                 position="0.4 0 -1"
                 scale="0.3 0.3 0.3"
@@ -26,8 +45,39 @@
             </a-entity>
         </a-marker>
 
-        <!-- Ajuste da câmera para reduzir o zoom -->
-        <a-entity camera look-controls="enabled: false" position="0 1.6 3"></a-entity>
+        <!-- Câmera com suporte a Pinça e Botões -->
+        <a-entity 
+            id="camera" 
+            camera 
+            fov="80" 
+            position="0 1.6 4"
+            gesture-detector>
+        </a-entity>
     </a-scene>
+
+    <!-- Controles de Zoom -->
+    <div class="zoom-controls">
+        <button onclick="ajustarZoom(-5)">➖</button>
+        <button onclick="ajustarZoom(5)">➕</button>
+    </div>
+
+    <script>
+        const camera = document.getElementById("camera");
+
+        // Função para ajustar o zoom pelos botões
+        function ajustarZoom(valor) {
+            let fovAtual = parseFloat(camera.getAttribute("fov"));
+            let novoFov = Math.min(Math.max(fovAtual + valor, 50), 120); // Limita entre 50 e 120
+            camera.setAttribute("fov", novoFov);
+        }
+
+        // Ajustar zoom com gesto de pinça (pinch-to-zoom)
+        camera.addEventListener("pinchmoved", (event) => {
+            let fovAtual = parseFloat(camera.getAttribute("fov"));
+            let novoFov = Math.min(Math.max(fovAtual * event.detail.scale, 50), 120);
+            camera.setAttribute("fov", novoFov);
+        });
+    </script>
+
 </body>
 </html>
